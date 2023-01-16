@@ -10,7 +10,20 @@ on:
 #    - cron: '27 8 * * 6'
   push:
     branches: [ "master" ]
-    # Publish semver tags as releases.
+    
+  workflow_dispatch:
+    # Inputs the workflow accepts.
+    inputs:
+      name:
+        # Friendly description to be shown in the UI instead of 'name'
+        description: 'version to build'
+        # Default value if no value is explicitly provided
+        default: '0.0.1'
+        # Input has to be provided for the workflow to run
+        required: true
+        
+        
+# Publish semver tags as releases.
 #    tags: [ 'v*.*.*' ]
 #  pull_request:
 #    branches: none
@@ -22,7 +35,7 @@ env:
   # github.repository as <account>/<repo>
   #IMAGE_NAME: ${{ github.repository }}
   IMAGE_NAME: aws-iot-greengrass-rak
-  IMAGE_TAG: 0.1
+  IMAGE_TAG: ${{ github.event.inputs.name }}
   
 
 
@@ -90,6 +103,7 @@ jobs:
           #platforms: linux/amd64, linux/arm64, linux/s390x, linux/arm/v7, linux/arm/v6
           platforms: linux/aarch64
           push: true
-          tags: ${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}  
+          #tags: ${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
+          tags: ${{ env.IMAGE_NAME }}:${{ github.event.inputs.name }}
           labels: ${{ steps.meta.outputs.labels }}
      
